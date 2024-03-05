@@ -10,5 +10,5 @@ mkl-random
 numpy==1.16.4
 opencv-python
 pycparser
-torch
+torch==2.2.1
 Werkzeug
