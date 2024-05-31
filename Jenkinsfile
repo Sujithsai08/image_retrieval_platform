@@ -1,10 +1,7 @@
 pipeline {
     agent any
 
-    environment {
-        VIRTUAL_ENV = "${WORKSPACE}/venv"
-        PYTHON = "${VIRTUAL_ENV}/bin/python"
-    }
+  
 
     stages {
         stage('Checkout') {
@@ -46,17 +43,5 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            archiveArtifacts artifacts: '**/results.xml', allowEmptyArchive: true
-            junit 'results.xml'
-            sh 'deactivate'
-        }
-        success {
-            slackSend(channel: '#your-channel', message: "Build ${env.BUILD_NUMBER} succeeded.")
-        }
-        failure {
-            slackSend(channel: '#your-channel', message: "Build ${env.BUILD_NUMBER} failed.")
-        }
-    }
+    
 }
