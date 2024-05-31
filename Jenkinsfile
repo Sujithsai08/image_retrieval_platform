@@ -14,34 +14,45 @@ pipeline {
         }
         stage('Setup Python Environment') {
             steps {
-                sh '''
-               
-                python3 -m venv venv
-                source venv/bin/activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
-                '''
+                script {
+                    // Check if Python 3 is installed
+                    if (!sh(script: 'command -v python3', returnStatus: true)) {
+                        // Install Python 3 and required packages
+                        sh '''
+                            sudo apt-get update
+                            sudo apt-get install -y python3 python3-venv python3-pip
+                        '''
+                    }
+                    // Create virtual environment
+                    sh 'python3 -m venv venv'
+                    // Activate virtual environment
+                    sh "${VIRTUAL_ENV}/bin/activate"
+                    // Upgrade pip and install requirements
+                    sh '''
+                        ${PYTHON} -m pip install --upgrade pip
+                        ${PYTHON} -m pip install -r requirements.txt
+                    '''
+                }
             }
         }
         stage('Run Tests') {
             steps {
-                sh 'source venv/bin/activate && pytest'
+                sh "${VIRTUAL_ENV}/bin/activate && pytest"
             }
         }
         stage('Build') {
             steps {
-                sh 'source venv/bin/activate && python setup.py sdist bdist_wheel'
+                sh "${VIRTUAL_ENV}/bin/activate && python setup.py sdist bdist_wheel"
             }
         }
         stage('Deploy') {
             steps {
                 sh '''
-                source venv/bin/activate
-                # Add your deployment script here
-                echo "Deploying application..."
+                    ${VIRTUAL_ENV}/bin/activate
+                    # Add your deployment script here
+                    echo "Deploying application..."
                 '''
             }
         }
     }
-   
 }
