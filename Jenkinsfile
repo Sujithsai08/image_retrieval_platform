@@ -6,14 +6,12 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/YourUsername/image_retrieval_platform.git'
+                git 'https://github.com/Sujithsai08/image_retrieval_platform.git'
             }
         }
         stage('Setup Python Environment') {
             steps {
-                sh 'python3 -m venv venv'
-                sh 'source venv/bin/activate'
-                sh 'pip install --upgrade pip'
+               
                 sh 'pip install -r requirements.txt'
             }
         }
