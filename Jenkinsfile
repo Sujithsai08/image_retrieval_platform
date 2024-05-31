@@ -1,7 +1,10 @@
 pipeline {
     agent any
 
-   
+    environment {
+        VIRTUAL_ENV = "${WORKSPACE}/venv"
+        PYTHON = "${VIRTUAL_ENV}/bin/python"
+    }
 
     stages {
         stage('Checkout') {
@@ -11,8 +14,13 @@ pipeline {
         }
         stage('Setup Python Environment') {
             steps {
+                sh '''
                
-                sh 'pip install -r requirements.txt'
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                '''
             }
         }
         stage('Run Tests') {
@@ -29,10 +37,11 @@ pipeline {
             steps {
                 sh '''
                 source venv/bin/activate
+                # Add your deployment script here
                 echo "Deploying application..."
                 '''
             }
         }
     }
-    
+   
 }
